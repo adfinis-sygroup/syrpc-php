@@ -300,7 +300,7 @@ class RPCBase {
 			false,
 			true,
 			false,
-			true
+			false
 		);
 		$this->requestChannel->queue_bind(
 			$this->requestQueue,
