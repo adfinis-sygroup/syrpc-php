@@ -81,7 +81,7 @@ class Client extends RPCBase {
 		$resultId = Common::getUUID4();
 		$body = array(
 			'result_id' => $resultId,
-			'type_'     => trim($type),
+			'type'     => trim($type),
 			'data'      => $data
 		);
 		$message = new AMQPMessage(

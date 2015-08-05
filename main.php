@@ -96,7 +96,7 @@ function serverRunner($server, $timeout) {
 				'baz' => 9100,
 				'is_running' => 'true',
 			),
-			'type_' => $type
+			'type' => $type
 		));
 		$server->putResult($resultId, $data);
 		Common::$lg->addDebug("Server put result for request {$resultId}");

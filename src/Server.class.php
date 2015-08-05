@@ -107,7 +107,7 @@ class Server extends RPCBase {
 			$resp     = json_decode($body);
 			$resultId = $resp->{'result_id'};
 			$data     = $resp->{'data'};
-			$type     = $resp->{'type_'};
+			$type     = $resp->{'type'};
 			return array($type, $resultId, $data);
 		}
 		throw new EmptyException();
