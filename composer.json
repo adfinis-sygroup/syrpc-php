@@ -1,6 +1,21 @@
 {
   "name": "adfinis-sygroup/syrpc-php",
+  "license": "LGPL-3.0",
   "description": "Library to access and provide syrpc rabbitmq services.",
+  "authors": [
+      {
+          "name": "Jean-Louis Fuchs",
+          "email": "jean-louis.fuchs@adfinis-sygroup.ch",
+          "homepage": "http://www.adfinis-sygroup.ch",
+          "role": "Developer"
+      },
+      {
+          "name": "Sven Osterwalder",
+          "email": "sven.osterwalder@adfinis-sygroup.ch",
+          "homepage": "http://www.adfinis-sysgroup.ch",
+          "role": "Developer"
+      }
+  ],
   "config": {
       "vendor-dir": "src/vendor"
   },
