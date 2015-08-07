@@ -1,8 +1,11 @@
 {
+  "name": "adfinis-sygroup/syrpc-php",
+  "description": "Library to access and provide syrpc rabbitmq services.",
   "config": {
       "vendor-dir": "src/vendor"
   },
   "require": {
+      "php": ">= 5.3.0",
       "videlalvaro/php-amqplib": "2.5.*",
       "monolog/monolog": "1.*"
   },
