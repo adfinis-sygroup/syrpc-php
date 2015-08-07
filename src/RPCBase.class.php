@@ -2,8 +2,6 @@
 
 namespace SyRPC;
 
-require __DIR__ . '/vendor/autoload.php';
-
 use PhpAmqpLib\Connection\AMQPConnection;
 
 /**

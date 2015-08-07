@@ -5,8 +5,6 @@
 
 namespace SyRPC\Constants;
 
-require __DIR__ . '/vendor/autoload.php';
-
 use Monolog\Logger;
 
 // Define an AMQ queue timeout of 3 hours
