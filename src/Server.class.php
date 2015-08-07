@@ -86,7 +86,7 @@ class Server extends RPCBase {
 	 *                                     listening shall be cancelled
 	 * @returns       void
 	 */
-	public function getRequest($timeout) {
+	public function getRequest($timeout=0) {
 		Common::$lg->addDebug("Server waiting for requests during {$timeout}s on {$this->requestExchange}");
 		while (!$this->response) {
 			try {

@@ -108,7 +108,7 @@ class Client extends RPCBase {
 	 * @param         int    $timeout  Timeout in seconds after which the fetching shall stop
 	 * @returns       string           JSON encoded data string
 	 */
-	public function getResult($resultId, $timeout) {
+	public function getResult($resultId, $timeout=0) {
 		$hashId = Common::getHash($resultId, $this->amqNumQueues);
 		$resultQueue = $this->getResultQueue($hashId);
 		$this->waitId   = $resultId;

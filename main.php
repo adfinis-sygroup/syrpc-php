@@ -11,14 +11,15 @@ define("MODE_CLIENT", 'client');
 define("MODE_SERVER", 'server');
 
 function setupLogger() {
-	foreach (Common::$lg->getHandlers() as $handler) {
-		$handler->setLevel(Logger::DEBUG);
-	}
+	\SyRPC\Common::$lg = \SyRPC\Common::setupLogger(
+			'syrpc-php-test',
+			Logger::DEBUG
+	);
 }
 
-function initSettings() {
+function getSettings() {
 	$settings = array();
-	$settings['app_name']        = 'symonitoring_rpc';
+	$settings['app_name']        = 'syrpc';
 	$settings['amq_virtualhost'] = '/';
 	$settings['amq_host']        = 'localhost';
 	$settings['amq_user']        = 'guest';
@@ -26,94 +27,75 @@ function initSettings() {
 	return $settings;
 }
 
-function runClient($runnerMode=false) {
-	Common::$lg->addDebug(sprintf("Starting client in runner mode: %s", ($runnerMode === true)));
-	$settings = initSettings();
-	$timeout = 10;
-	$client = new Client($settings);
-	setupLogger();
-	if ($runnerMode) {
+function runServerForever() {
+	runServer(true);
+}
+
+function runServer($forever=false) {
+	Common::$lg->addDebug(sprintf("Starting server in forever mode: %s", ($forever === true)));
+	$settings = getSettings();
+	$server = Server::getInstance($settings);
+	if ($forever) {
 		while (true) {
 			try {
-				clientRunner($client, $timeout);
+				serveOne($server);
 			}
 			catch (\PhpAmqpLib\Exception\AMQPTimeoutException $e) {
-				continue;
+				exit(1);
 			}
 		}
 	}
 	else {
-		clientRunner($client, $timeout);
+		serveOne($server);
 	}
 }
 
-function clientRunner($client, $timeout) {
-	$type = 'ping';
-	$data = json_encode(array(
-		'foo' => 'bar',
-		'baz' => 9001
-	));
-	$resultId = $client->putRequest($type, $data);
-	Common::$lg->addDebug("Client put request $resultId on AMQ");
-	$data = $client->getResult($resultId, $timeout);
-	if ($data) {
-		Common::$lg->addDebug("Client got data for {$resultId}");
-	}
-	else {
-		Common::$lg->addDebug("Client got no data for {$resultId} within timeout {$timeout}s");
-	}
-}
-
-function runServer($runnerMode=false) {
-	Common::$lg->addDebug(sprintf("Starting server in runner mode: %s", ($runnerMode === true)));
-	$settings = initSettings();
-	$timeout = 10;
-	$server = new Server($settings);
-	setupLogger();
-	if ($runnerMode) {
-		while (true) {
-			try {
-				serverRunner($server, $timeout);
-			}
-			catch (\PhpAmqpLib\Exception\AMQPTimeoutException $e) {
-				continue;
-			}
-		}
-	}
-	else {
-		serverRunner($server, $timeout);
-	}
-}
-
-function serverRunner($server, $timeout) {
-	list($type, $resultId, $data) = $server->getRequest($timeout);
-	if ($resultId) {
-		Common::$lg->addDebug("Server got request {$resultId}");
-		$type = 'some funny other type';
-		$data = json_encode(array(
-			'data' => array(
-				'foo' => 'baz',
-				'baz' => 9100,
-				'is_running' => 'true',
-			),
-			'type' => $type
-		));
+function serveOne($server) {
+	list($type, $resultId, $data) = $server->getRequest();
+	Common::$lg->addDebug("Server got request {$resultId}");
+	if ($type == 'echo') {
 		$server->putResult($resultId, $data);
 		Common::$lg->addDebug("Server put result for request {$resultId}");
 	}
 	else {
-		Common::$lg->addDebug("Server got no request within timeout {$timeout}s");
+		Common::$lg->addDebug("Server got no request within timeout");
 	}
 }
 
+function runClient() {
+	$settings = getSettings();
+	$client = Client::getInstance($settings);
+	$type = 'echo';
+	$data = array(
+		'foo' => 'bar',
+		'baz' => 9001
+	);
+	$resultId = $client->putRequest($type, $data);
+	Common::$lg->addDebug("Client put request $resultId on AMQ");
+	$result = $client->getResult($resultId);
+	Common::$lg->addDebug("Client got data for {$resultId}");
+	if (
+		$result->{'foo'} == $data['foo'] &&
+		$result->{'baz'} == $data['baz']
+	) {
+		exit(0);
+	}
+	else {
+		echo "Client received wrong data for {$resultId}";
+		exit(1);
+	}
+}
+
+setupLogger();
+
 if (isset($argv[1])) {
 	$mode = $argv[1];
-	$runner = isset($argv[2]) && $argv[2] == 'runner';
+	$forever = isset($argv[2]) && $argv[2] == 'forever';
 	if ($mode == MODE_CLIENT) {
-		runClient($runner);
+		runClient($forever);
 	}
 	else if ($mode == MODE_SERVER) {
-		runServer($runner);
+		runServer($forever);
 	}
 	else {
 		Common::$lg->addCritical("Unknown mode, select either 'client' or 'server'");
