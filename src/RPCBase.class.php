@@ -123,6 +123,12 @@ class RPCBase {
 	 * @var string $msgEncoding
 	 */
 	protected $msgEncoding;
+	/**
+	 * Timeout in seconds when awaiting response.
+	 *
+	 * @var int $timeout
+	 */
+	protected $timeout;
 
 	/**
 	 * Class constructor.
@@ -138,6 +144,8 @@ class RPCBase {
 	 *                       * amq_msg_ttl     (optional)
 	 *                       * amq_num_queues  (optional)
 	 *                       * msg_encoding    (optional)
+	 *                       * timeout         (optional)
+	 *
 	 * @return        void
 	 */
 	protected function __construct($settings) {
@@ -171,6 +179,12 @@ class RPCBase {
 		}
 		else {
 			$this->msgEncoding = Constants\General::ENCODING;
+		}
+		if (array_key_exists('timeout', $settings)) {
+			$this->timeout = $settings['timeout'];
+		}
+		else {
+			$this->timeout = Constants\General::TIMEOUT;
 		}
 		$this->amqHost           = $settings['amq_host'];
 		$this->amqUser           = $settings['amq_user'];

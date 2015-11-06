@@ -34,6 +34,7 @@ class Client extends RPCBase {
 	 *                       * amq_msg_ttl     (optional)
 	 *                       * amq_num_queues  (optional)
 	 *                       * msg_encoding    (optional)
+	 *                       * timeout         (optional)
 	 *
 	 * @return        RPCBase  instance
 	 */
@@ -59,6 +60,8 @@ class Client extends RPCBase {
 	 *                       * amq_msg_ttl     (optional)
 	 *                       * amq_num_queues  (optional)
 	 *                       * msg_encoding    (optional)
+	 *                       * timeout         (optional)
+	 *
 	 * @return        void
 	 */
 	protected function __construct($settings) {
@@ -108,7 +111,7 @@ class Client extends RPCBase {
 	 * @param         int    $timeout  Timeout in seconds after which the fetching shall stop
 	 * @returns       string           JSON encoded data string
 	 */
-	public function getResult($resultId, $timeout=0) {
+	public function getResult($resultId, $timeout=$this->timeout) {
 		$hashId = Common::getHash($resultId, $this->amqNumQueues);
 		$resultQueue = $this->getResultQueue($hashId);
 		$this->waitId   = $resultId;
