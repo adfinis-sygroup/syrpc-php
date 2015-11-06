@@ -19,7 +19,7 @@ class General {
     const ENCODING    = 'utf-8';
     const APP_NAME    = 'symonitoring_rpc';
     const NUM_WORKERS = 2;
-	const TIMEOUT     = 30; //in seconds
+    const TIMEOUT     = 0; //in seconds
 }
 
 /**
