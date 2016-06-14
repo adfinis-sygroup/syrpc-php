@@ -38,12 +38,12 @@ class Client extends RPCBase {
 	 *
 	 * @return        RPCBase  instance
 	 */
-    public static function & getInstance($settings) {
-        $instanceId = sprintf(
-            '%s:%s',
-            $settings['app_name'],
-            $settings['amq_host']
-        );
+	public static function & getInstance($settings) {
+		$instanceId = sprintf(
+			'%s:%s',
+			$settings['app_name'],
+			$settings['amq_host']
+		);
 
 		if (!isset(self::$_instance[$instanceId])) {
 			self::$_instance[$instanceId] = new self($settings);
