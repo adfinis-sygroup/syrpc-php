@@ -16,9 +16,9 @@ class Client extends RPCBase {
 	/**
 	 * Object instance.
 	 *
-	 * @var Client $_instance
+	 * @var Client[] $_instance
 	 */
-	static private $_instance;
+	static private $_instance = array();
 
 	/**
 	 * Returns a singleton instance of an Client object.
@@ -39,11 +39,16 @@ class Client extends RPCBase {
 	 * @return        RPCBase  instance
 	 */
 	public static function & getInstance($settings) {
+		$instanceId = sprintf(
+			'%s:%s',
+			$settings['app_name'],
+			$settings['amq_host']
+		);
 
-		if (is_null(self::$_instance)) {
-			self::$_instance = new self($settings);
+		if (!isset(self::$_instance[$instanceId])) {
+			self::$_instance[$instanceId] = new self($settings);
 		}
-		return self::$_instance;
+		return self::$_instance[$instanceId];
 	}
 
 	/**
